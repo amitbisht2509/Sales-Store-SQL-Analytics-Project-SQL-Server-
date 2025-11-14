@@ -1,4 +1,4 @@
-<img width="271" height="147" alt="image" src="https://github.com/user-attachments/assets/47615d94-1df5-4912-bfd2-2db9ac38cc9c" />**🛒 Sales Store – SQL Analytics Project (SQL Server)**
+
 
 **📘 Introduction**
 
