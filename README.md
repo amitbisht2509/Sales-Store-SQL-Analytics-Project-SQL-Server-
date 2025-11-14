@@ -133,6 +133,7 @@ WHERE transaction_id = 'TXN432798';
 ```
 
 **7️⃣ Standardizing Categorical Values**
+
 **Gender Standardization**
 ```sql
 SELECT DISTINCT gender FROM sales;
@@ -166,50 +167,32 @@ Payment mode standardized
 
 Ensured data consistency for accurate analysis
 
-
-**🧩 Project Background**
-
-Although the store records daily sales transactions, it lacks clarity on key business metrics:
-
-#1 Which products sell the most.
-
-#2 Who are the highest-value customers.
-
-#3 Which categories generate the most revenue.
-
-#4 Which products/category have high cancellation rates.
-
-#5 Payment mode usage patterns.
-
-#6 Peak purchasing times
-
-#7 Customer demographic insights.
-
-
-
 **❗ Business Problems & SQL Solutions**
 
 Each problem below includes the SQL Server query used to solve it.
 
-1️⃣ Problem: No visibility of top-selling products
+**1️⃣ Problem: No visibility of top-selling products**
 
 
-✅ Query: Top 5 Best-Selling Products (by quantity)
+**✅ Query: Top 5 Best-Selling Products (by quantity)**
 
 ```sql
-SELECT TOP 5 
-    p.product_name,
-    SUM(o.quantity) AS total_quantity_sold
-FROM orders o
-JOIN products p ON o.product_id = p.product_id
-WHERE o.order_status = 'Completed'
-GROUP BY p.product_name
-ORDER BY total_quantity_sold DESC;
+SELECT * FROM sales
+SELECT DISTINCT status
+from sales
+
+SELECT TOP 5 product_name, SUM(quantity) AS total_quantity_sold
+FROM sales
+WHERE status='delivered'
+GROUP BY product_name
+ORDER BY total_quantity_sold DESC
 ```
 
 
-2️⃣ Problem: Store doesn't know which products get cancelled the most
-✅ Query: Most Frequently Cancelled Products
+**2️⃣ Problem: Store doesn't know which products get cancelled the most**
+
+**✅ Query: Most Frequently Cancelled Products**
+```sql
 SELECT 
     p.product_name,
     COUNT(*) AS cancel_count
@@ -218,6 +201,9 @@ JOIN products p ON o.product_id = p.product_id
 WHERE o.order_status = 'Cancelled'
 GROUP BY p.product_name
 ORDER BY cancel_count DESC;
+```
+<img width="258" height="131" alt="image" src="https://github.com/user-attachments/assets/6a51029e-59eb-4ba7-9259-9d1ba2ffc9f7" />
+
 
 3️⃣ Problem: No clarity on top-spending customers
 ✅ Query: Top 5 Highest Spending Customers
