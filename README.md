@@ -36,15 +36,17 @@ Each problem below includes the SQL Server query used to solve it.
 
 ✅ Query: Top 5 Best-Selling Products (by quantity)
 
-
-``` SELECT TOP 5 
+```sql
+SELECT TOP 5 
     p.product_name,
     SUM(o.quantity) AS total_quantity_sold
 FROM orders o
 JOIN products p ON o.product_id = p.product_id
 WHERE o.order_status = 'Completed'
 GROUP BY p.product_name
-ORDER BY total_quantity_sold DESC; ```
+ORDER BY total_quantity_sold DESC;
+```
+
 
 2️⃣ Problem: Store doesn't know which products get cancelled the most
 ✅ Query: Most Frequently Cancelled Products
