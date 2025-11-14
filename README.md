@@ -49,7 +49,6 @@ WHERE Row_Num = 2;
 ```sql
 EXEC sp_rename 'sales.quantiy', 'quantity', 'COLUMN';
 ```
-
 ```sql
 EXEC sp_rename 'sales.prce', 'price', 'COLUMN';
 ```
@@ -241,8 +240,8 @@ FROM payments
 GROUP BY payment_mode
 ORDER BY usage_count DESC;
 
-7️⃣ Problem: Age group buying patterns not known
-✅ Query: Sales by Age Group
+**7️⃣ Problem: Age group buying patterns not known**
+**✅ Query: Sales by Age Group**
 SELECT 
     CASE 
         WHEN c.age BETWEEN 18 AND 25 THEN '18-25'
@@ -273,8 +272,8 @@ WHERE order_status = 'Completed'
 GROUP BY FORMAT(order_date, 'yyyy-MM')
 ORDER BY month;
 
-9️⃣ Problem: No gender-based buying insights
-✅ Query: Gender-wise Category Preference
+**9️⃣ Problem: No gender-based buying insights**
+**✅ Query: Gender-wise Category Preference**  
 SELECT 
     c.gender,
     p.category,
@@ -286,107 +285,73 @@ WHERE o.order_status = 'Completed'
 GROUP BY c.gender, p.category
 ORDER BY units_purchased DESC;
 
-🔟 Problem: Store doesn't know peak shopping hours
-✅ Query: Peak Purchase Hours
-SELECT 
-    DATEPART(HOUR, order_time) AS hour_of_day,
-    COUNT(*) AS total_orders
-FROM orders
-WHERE order_status = 'Completed'
-GROUP BY DATEPART(HOUR, order_time)
-ORDER BY total_orders DESC;
-
-**💼 Key Analytical Insights (Summary)**
-
-Based on the SQL analysis:
-
-Certain products dominate overall sales volume
-
-Some categories show high cancellation rates, impacting revenue
-
-A small set of customers generate a large % of total sales
-
-Payment modes vary by customer demographic
-
-Evening hours show significantly higher order volume
-
-Certain age groups (26–35 typically) contribute most revenue
-
-Gender influences purchasing category choices
-
-Monthly trends show seasonal spikes that can be leveraged
+**🔟 Problem: Store doesn't know peak shopping hours**
+**✅ Query: Peak Purchase Hours**
+	SELECT 
+		CASE 
+			WHEN DATEPART(HOUR,time_of_purchase) BETWEEN 0 AND 5 THEN 'NIGHT'
+			WHEN DATEPART(HOUR,time_of_purchase) BETWEEN 6 AND 11 THEN 'MORNING'
+			WHEN DATEPART(HOUR,time_of_purchase) BETWEEN 12 AND 17 THEN 'AFTERNOON'
+			WHEN DATEPART(HOUR,time_of_purchase) BETWEEN 18 AND 23 THEN 'EVENING'
+		END AS time_of_day,
+		COUNT(*) AS total_orders
+	FROM sales
+	GROUP BY 
+		CASE 
+			WHEN DATEPART(HOUR,time_of_purchase) BETWEEN 0 AND 5 THEN 'NIGHT'
+			WHEN DATEPART(HOUR,time_of_purchase) BETWEEN 6 AND 11 THEN 'MORNING'
+			WHEN DATEPART(HOUR,time_of_purchase) BETWEEN 12 AND 17 THEN 'AFTERNOON'
+			WHEN DATEPART(HOUR,time_of_purchase) BETWEEN 18 AND 23 THEN 'EVENING'
+		END
+ORDER BY total_orders DESC
+```
+**Business Impact:** Optimize staffing, promotions, and server loads.
 
 **💡 Business Recommendations (How Store Can Increase Revenue)**
 
 These recommendations translate SQL insights into actionable strategy:
 
-1. Prioritize Stocking Top-Selling Products
-
+**1. Prioritize Stocking Top-Selling Products**
 Avoid stockouts → directly increases sales volume.
 
-2. Fix High-Cancellation Items
-
+**2. Fix High-Cancellation Items**
 Investigate:
-
 Delivery delays
-
 Poor product quality
-
 Wrong item images/descriptions
-
 Incorrect pricing
-
 Reducing cancellations = instant profit improvement.
 
-3. Launch Loyalty Programs for High-Value Customers
-
+**3. Launch Loyalty Programs for High-Value Customers**
 Offer:
-
 Cashback
-
 Exclusive discounts
-
 Early access to sales
-
 Boosts repeat purchases.
 
-4. Promote High-Revenue Categories
-
+**4. Promote High-Revenue Categories**
 Run:
-
 Bundled deals
-
 Category-specific offers
-
 Sponsored ads
 
-5. Improve Low-Performing Categories
-
+**5. Improve Low-Performing Categories**
 Check:
-
 Inventory issues
-
 Low visibility
-
 Price competitiveness
-
 Customer feedback
 
-6. Time-Based Discounting
-
+**6. Time-Based Discounting**
 Example:
-
 High peak in evenings → run flash deals
-
 Low morning sales → introduce morning offers
 
-7. Personalize Marketing by Age Group
-
+**7. Personalize Marketing by Age Group-**
 18–25 → gadgets, fashion
 26–35 → home & lifestyle
 36–50 → family essentials
 
-8. Encourage Digital Payments
-
-If COD is high →
+**8. Encourage Digital Payments**
+--If COD is high →
 Offer “5% discount on prepaid orders” to reduce delivery failures.
