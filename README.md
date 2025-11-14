@@ -1,6 +1,6 @@
 
 
-**📘 Introduction**
+****📘 Introduction****
 
 This project delivers a complete **SQL Server**–based analysis of a retail store’s sales dataset.
 The objective is to convert raw transactional data into meaningful insights centered around product performance, customer behavior, payment patterns, cancellations, and operational efficiency.
@@ -8,7 +8,7 @@ The objective is to convert raw transactional data into meaningful insights cent
 All insights are generated using optimized T-SQL queries running in Microsoft SQL Server. To see whole project click [sqlproject1.sql](./sqlproject1.sql)
 
 
-**Data Cleaning & Preparation (SQL Server)**
+**--Data Cleaning & Preparation (SQL Server)**
 
 The raw dataset required multiple cleaning steps before analysis.
 All cleaning operations were performed using T-SQL in SQL Server.
@@ -16,31 +16,24 @@ All cleaning operations were performed using T-SQL in SQL Server.
 **1️⃣ Creating a Working Copy of the Dataset**
 
 A duplicate table was created to ensure the original dataset remains untouched.
-
 ```sql
 sql SELECT * INTO sales FROM sales_store;
 ```
 
 **2️⃣ Checking for Duplicate Records**
-
 ```sql
 SELECT transaction_id, COUNT(*) AS DuplicateCount
 FROM sales
 GROUP BY transaction_id
 HAVING COUNT(*) > 1;
 ```
-
-**Duplicate Transaction IDs found:**
-
-TXN240646
-
-TXN342128
-
-TXN855235
-
+Duplicate Transaction IDs found:
+TXN240646,
+TXN342128,
+TXN855235,
 TXN981773
 
-**Removing Duplicate Rows Using CTE**
+**--Removing Duplicate Rows Using CTE**
 
 ```sql
 WITH CTE AS (
