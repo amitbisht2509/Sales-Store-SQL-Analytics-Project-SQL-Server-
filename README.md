@@ -1,4 +1,4 @@
-**🛒 Sales Store – SQL Analytics Project (SQL Server)**
+<img width="271" height="147" alt="image" src="https://github.com/user-attachments/assets/47615d94-1df5-4912-bfd2-2db9ac38cc9c" />**🛒 Sales Store – SQL Analytics Project (SQL Server)**
 
 **📘 Introduction**
 
@@ -187,37 +187,38 @@ WHERE status='delivered'
 GROUP BY product_name
 ORDER BY total_quantity_sold DESC
 ```
-
+**Business Impact:** Helps prioritize stock and boost sales through targeted promotions.
+<img width="258" height="131" alt="image" src="https://github.com/user-attachments/assets/6a51029e-59eb-4ba7-9259-9d1ba2ffc9f7" />
 
 **2️⃣ Problem: Store doesn't know which products get cancelled the most**
 
 **✅ Query: Most Frequently Cancelled Products**
 ```sql
-SELECT 
-    p.product_name,
-    COUNT(*) AS cancel_count
-FROM orders o
-JOIN products p ON o.product_id = p.product_id
-WHERE o.order_status = 'Cancelled'
-GROUP BY p.product_name
-ORDER BY cancel_count DESC;
+SELECT TOP 5 product_name, COUNT(*) AS total_cancelled
+FROM sales
+WHERE status='cancelled'
+GROUP BY product_name
+ORDER BY total_cancelled DESC
 ```
-<img width="258" height="131" alt="image" src="https://github.com/user-attachments/assets/6a51029e-59eb-4ba7-9259-9d1ba2ffc9f7" />
+**Business Impact:** Identify poor-performing products to improve quality or remove from catalog.
 
 
-3️⃣ Problem: No clarity on top-spending customers
-✅ Query: Top 5 Highest Spending Customers
-SELECT TOP 5
-    c.customer_name,
-    SUM(o.quantity * o.price) AS total_spend
-FROM orders o
-JOIN customers c ON o.customer_id = c.customer_id
-WHERE o.order_status = 'Completed'
-GROUP BY c.customer_name
-ORDER BY total_spend DESC;
+**3️⃣ Problem: No clarity on top-spending customers**
+**✅ Query: Top 5 Highest Spending Customers**
+```sql
+SELECT * FROM sales
 
-4️⃣ Problem: No understanding of category revenue
-✅ Query: Revenue by Product Category
+SELECT TOP 5 customer_name,
+	FORMAT(SUM(price*quantity),'C0','en-IN') AS total_spend
+FROM sales 
+GROUP BY customer_name
+ORDER BY SUM(price*quantity) DESC
+```
+**Business Impact:** Personalized offers, loyalty rewards, and retention.
+<img width="237" height="124" alt="image" src="https://github.com/user-attachments/assets/4ecac896-44e9-4002-94cc-883b35099a2c" />
+
+**4️⃣ Problem: No understanding of category revenue**
+**✅ Query: Revenue by Product Category**
 SELECT
     p.category,
     SUM(o.quantity * o.price) AS total_revenue
