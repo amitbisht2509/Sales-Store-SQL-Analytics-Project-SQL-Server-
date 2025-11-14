@@ -8,6 +8,140 @@ The objective is to convert raw transactional data into meaningful insights cent
 All insights are generated using optimized T-SQL queries running in Microsoft SQL Server. To see whole project click [sqlproject1.sql](./sqlproject1.sql)
 
 
+Data Cleaning & Preparation (SQL Server)
+
+The raw dataset required multiple cleaning steps before analysis.
+All cleaning operations were performed using T-SQL in SQL Server.
+
+1️⃣ Creating a Working Copy of the Dataset
+
+A duplicate table was created to ensure the original dataset remains untouched.
+
+SELECT * INTO sales FROM sales_store;
+
+2️⃣ Checking for Duplicate Records
+SELECT transaction_id, COUNT(*) AS DuplicateCount
+FROM sales
+GROUP BY transaction_id
+HAVING COUNT(*) > 1;
+
+
+Duplicate Transaction IDs found:
+
+TXN240646
+
+TXN342128
+
+TXN855235
+
+TXN981773
+
+Removing Duplicate Rows Using CTE
+WITH CTE AS (
+    SELECT *,
+        ROW_NUMBER() OVER (PARTITION BY transaction_id ORDER BY transaction_id) AS Row_Num
+    FROM sales
+)
+DELETE FROM CTE
+WHERE Row_Num = 2;
+
+3️⃣ Fixing Incorrect Column Names
+EXEC sp_rename 'sales.quantiy', 'quantity', 'COLUMN';
+EXEC sp_rename 'sales.prce', 'price', 'COLUMN';
+
+4️⃣ Checking Data Types of All Columns
+SELECT COLUMN_NAME, DATA_TYPE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'sales';
+
+5️⃣ Checking for NULL Values in Every Column
+
+A dynamic SQL script was used to automatically check NULL counts column-wise.
+
+DECLARE @SQL NVARCHAR(MAX) = '';
+
+SELECT @SQL = STRING_AGG(
+    'SELECT ''' + COLUMN_NAME + ''' AS ColumnName, 
+    COUNT(*) AS NullCount 
+    FROM sales 
+    WHERE ' + QUOTENAME(COLUMN_NAME) + ' IS NULL',
+    ' UNION ALL '
+)
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_NAME = 'sales';
+
+EXEC sp_executesql @SQL;
+
+6️⃣ Treating NULL Values
+Identifying Rows Containing NULL Values
+SELECT *
+FROM sales
+WHERE transaction_id IS NULL
+   OR customer_id IS NULL
+   OR customer_name IS NULL
+   OR customer_age IS NULL
+   OR gender IS NULL
+   OR product_id IS NULL
+   OR product_name IS NULL
+   OR product_category IS NULL
+   OR quantity IS NULL
+   OR payment_mode IS NULL
+   OR purchase_date IS NULL
+   OR status IS NULL
+   OR price IS NULL;
+
+Removing Invalid Rows
+DELETE FROM sales
+WHERE transaction_id IS NULL;
+
+Correcting Individual Records
+UPDATE sales
+SET customer_id = 'CUST9494'
+WHERE transaction_id = 'TXN977900';
+
+UPDATE sales
+SET customer_id = 'CUST1401'
+WHERE transaction_id = 'TXN985663';
+
+UPDATE sales
+SET customer_name = 'Mahika Saini',
+    customer_age = 35,
+    gender = 'Male'
+WHERE transaction_id = 'TXN432798';
+
+7️⃣ Standardizing Categorical Values
+Gender Standardization
+SELECT DISTINCT gender FROM sales;
+
+UPDATE sales SET gender = 'M' WHERE gender = 'Male';
+UPDATE sales SET gender = 'F' WHERE gender = 'Female';
+
+Payment Mode Standardization
+SELECT DISTINCT payment_mode FROM sales;
+
+UPDATE sales
+SET payment_mode = 'Credit Card'
+WHERE payment_mode = 'CC';
+
+**✔️ Summary of Cleaning Work**
+
+Duplicate rows identified and removed
+
+Misspelled column names fixed
+
+Data types validated
+
+NULL values identified and handled
+
+Incorrect or missing customer data corrected
+
+Gender standardized to M/F
+
+Payment mode standardized
+
+Ensured data consistency for accurate analysis
+
+
 **🧩 Project Background**
 
 Although the store records daily sales transactions, it lacks clarity on key business metrics:
